@@ -8,11 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 import ca.ualberta.ssrg.androidelasticsearch.R;
@@ -87,6 +89,12 @@ public class MainActivity extends Activity {
 
 		// Refresh the list when visible
 		// TODO: Search all
+		movies.clear();
+		Thread thread = new SearchThread("");
+		thread.start();
+		
+		// the below will not work, cannot create threads w/in the UI
+		// movieManager.searchMovies("", null);
 		
 	}
 
@@ -98,9 +106,17 @@ public class MainActivity extends Activity {
 		movies.clear();
 
 		// TODO: Extract search query from text view
-		
-		// TODO: Run the search thread
-		
+		ImageButton button = (ImageButton) findViewById(R.id.button1);
+		OnClickListener listener = new OnClickListener() {
+
+			
+			
+			
+			// TODO: Run the search thread		
+			public void onClick(View v) {
+			}
+		};
+		button.setOnClickListener(listener);
 	}
 	
 	/**
@@ -126,9 +142,20 @@ public class MainActivity extends Activity {
 
 	class SearchThread extends Thread {
 		// TODO: Implement search thread
+		private String search;
 		
+		public SearchThread(String s){
+			search = s;
+		}
+		
+		@Override 
+		public void run(){
+			movies.clear();
+			movies.addAll(movieManager.searchMovies(search,null));
+			
+			runOnUiThread(doUpdateGUIList);
+		}	
 	}
-
 	
 	class DeleteThread extends Thread {
 		private int movieId;
